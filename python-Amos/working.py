@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import haversine as hs
 import folium
 
-
 route_df = pd.read_csv('./python-Amos/route_df.csv')
 
 # add elevation difference
@@ -63,11 +62,10 @@ m = folium.Map(
 )
 
 start = folium.Marker(location=[24.674256,121.768730],popup="Starting Point",tooltip=folium.Tooltip("Start",permanent=True))
-start.add_to(route_df)
+start.add_to(m)
 end = folium.Marker(location=[23.965011,120.974105],popup="End Point",tooltip=folium.Tooltip("End",permanent=True))
 end.add_to(m)
 
 folium.PolyLine(coordinates,weight=6).add_to(m)
 
 m.save('map.html')
-display(m)
