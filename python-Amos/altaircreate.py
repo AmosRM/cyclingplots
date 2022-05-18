@@ -3,7 +3,16 @@ import numpy as np
 import altair as alt
 import gpxpy
 import haversine as hs
+import streamlit as st
+import folium
+from streamlit_folium import folium_static
 
+st.title('GPX file dashboard')
+
+# file = st.file_uploader("Upload a GPX file", type=["gpx"], accept_multiple_files=False)
+
+# if file is not None:
+#     gpx = gpxpy.parse(file)
 with open('../gpx/yilan-wulling.gpx', 'r') as gpx_file:
     gpx = gpxpy.parse(gpx_file)
 
@@ -48,7 +57,7 @@ skip = 10
 route_df = route_df[::skip]
 
 route_df['elevation_diff'] = route_df['elevation'].diff()
-route_df['time_diff'] = [0] + list((route_df.loc[1:,'time'].values - route_df.loc[:(route_df.shape[0]-2),'time'].values)/np.timedelta64(1,'s'))
+route_df['time_diff'] = [] + list(route_df['time'].diff().apply(lambda x: x/np.timedelta64(1, 's')))
 route_df['speed'] = route_df['distance']/route_df['time_diff'] * 18 / 5 * 10
 route_df['total_dist'] = np.cumsum(route_df['distance'])
 route_df['km'] = np.ceil((route_df['total_dist']+0.01)/1000)
@@ -68,6 +77,14 @@ df = route_df[['latitude', 'longitude', 'elevation', 'time', 'distance',
        'net_elevation']]
 df['total_dist'] = df['total_dist']/100
 df['speed-km/h'] = df['speed'].rolling(30).mean()
+
+# st.dataframe(df)
+# add average speed, total elevation, total time, date time etc
+st.map(df)
+
+
+# call to render Folium map in Streamlit
+st_data = st_folium(m, width = 725)
 
 # ALTAIR VIZ
 
@@ -104,4 +121,7 @@ final = alt.layer(a,b).resolve_scale(
     y = 'independent'
 )
 
-final
+st.altair_chart(final,use_container_width=True)
+
+if __name__=="__main__":
+    main()
