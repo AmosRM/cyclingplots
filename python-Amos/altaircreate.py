@@ -5,7 +5,7 @@ import gpxpy
 import haversine as hs
 import streamlit as st
 import folium
-from streamlit_folium import folium_static
+# from streamlit_folium import folium_static
 
 st.title('GPX file dashboard')
 
@@ -13,6 +13,8 @@ st.title('GPX file dashboard')
 
 # if file is not None:
 #     gpx = gpxpy.parse(file)
+
+######## Data manipulation ########
 with open('../gpx/yilan-wulling.gpx', 'r') as gpx_file:
     gpx = gpxpy.parse(gpx_file)
 
@@ -21,12 +23,12 @@ route_info = []
 for track in gpx.tracks:
     for segment in track.segments:
         for point in segment.points:
-           route_info.append({
-               'latitude': point.latitude,
-               'longitude': point.longitude,
-               'elevation': point.elevation,
-               'time': point.time
-           })
+            route_info.append({
+                'latitude': point.latitude,
+                'longitude': point.longitude,
+                'elevation': point.elevation,
+                'time': point.time
+                })
 
 route_df = pd.DataFrame(route_info)
 
@@ -84,7 +86,7 @@ st.map(df)
 
 
 # call to render Folium map in Streamlit
-st_data = st_folium(m, width = 725)
+# st_data = st_folium(m, width = 725)
 
 # ALTAIR VIZ
 
